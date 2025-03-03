@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  rabbitmq:
+    image: "rabbitmq:management"
+    container_name: template_rabbitmq
+    ports:
+      - "15672:15672"
+    expose:
+      - 5672
+
+  api:
+    build: ./backend/api
+    container_name: template_api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/api:/api/
+    restart: always
+
+  service1:
+    container_name: template_service1
+    build: ./backend/service1
+    volumes:
+      - ./backend/service1:/service1/
+    restart: always
+
+  service2:
+    container_name: template_service2
+    build: ./backend/service2
+    volumes:
+      - ./backend/service2:/service2/
+    restart: always
