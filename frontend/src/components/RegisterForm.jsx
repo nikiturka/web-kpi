@@ -1,44 +1,38 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const RegisterForm = () => {
     const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate(); // Хук для навігації
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError("");
-        setLoading(true);
-
         const username = e.target.username.value;
         const email = e.target.email.value;
         const password = e.target.password.value;
 
         if (!username || !email || !password) {
             setError("All fields are required!");
-            setLoading(false);
             return;
         }
 
         try {
             const response = await fetch("http://localhost:5000/api/register", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, email, password }),
             });
 
             const data = await response.json();
 
-            if (!response.ok) {
-                throw new Error(data.message || "Registration failed");
+            if (response.ok) {
+                alert("Registration successful!");
+                navigate("/"); // Після реєстрації переходимо на сторінку логіну
+            } else {
+                setError(data.message || "Registration failed");
             }
-
-            alert("Registered successfully!");
         } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
+            setError("Server error. Please try again later.");
         }
     };
 
@@ -50,9 +44,7 @@ const RegisterForm = () => {
                 <input type="email" name="email" placeholder="Email" required />
                 <input type="password" name="password" placeholder="Password" required />
                 {error && <p className="error">{error}</p>}
-                <button type="submit" disabled={loading}>
-                    {loading ? "Registering..." : "Register"}
-                </button>
+                <button type="submit">Register</button>
             </form>
         </div>
     );

@@ -1,44 +1,37 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
     const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate(); // Хук для навігації
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError("");
-        setLoading(true);
-
         const username = e.target.username.value;
         const password = e.target.password.value;
 
         if (!username || !password) {
             setError("Both fields are required!");
-            setLoading(false);
             return;
         }
 
         try {
             const response = await fetch("http://localhost:5000/api/login", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password }),
             });
 
             const data = await response.json();
 
-            if (!response.ok) {
-                throw new Error(data.message || "Login failed");
+            if (response.ok) {
+                localStorage.setItem("token", data.token); // Збереження токена (якщо бекенд повертає JWT)
+                navigate("/main"); // Перехід на головну сторінку
+            } else {
+                setError(data.message || "Invalid credentials");
             }
-
-            localStorage.setItem("token", data.token); // Збереження токена
-            alert("Logged in successfully!");
         } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
+            setError("Server error. Please try again later.");
         }
     };
 
@@ -49,9 +42,7 @@ const LoginForm = () => {
                 <input type="text" name="username" placeholder="Username" required />
                 <input type="password" name="password" placeholder="Password" required />
                 {error && <p className="error">{error}</p>}
-                <button type="submit" disabled={loading}>
-                    {loading ? "Logging in..." : "Login"}
-                </button>
+                <button type="submit">Login</button>
             </form>
         </div>
     );
