@@ -1,60 +1,56 @@
-from functools import lru_cache
-from typing import Annotated
-
 import uvicorn
-from broker import a_publish_to_rabbitmq, publish_to_rabbitmq
-from config import Settings
-from fastapi import Depends, FastAPI
+from fastapi import FastAPI, Request
+import httpx
 
-description = """
-Microservice boilerplate 🚀
+app = FastAPI()
 
-## Usage
-- Pass foo data to any of API's endpoints (You can use foo data from down below)
-- Look up to your terminal
-
-{ 
-"id": 50, 
-"user_id": 12, 
-"title": "Hello world", 
-"description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.", 
-"category_id": 4, 
-"price": "5000" 
-}
+# user_service URL for Docker network
+USER_SERVICE_URL = "http://user_service:8001"
 
 
-
-"""
-
-settings = Settings()
-app = FastAPI(description=description)
-
-
-@lru_cache
-def get_settings():
-    return Settings()
-
-
-@app.post("/api/user/subscribe")
-def subscribe_user(data: dict, settings: Annotated[Settings, Depends(get_settings)]):
-    publish_to_rabbitmq(
-        queue_name=settings.queue_name_to_first_service,
-        exchanger=settings.exchanger,
-        routing_key=settings.routing_key_to_first_service,
-        data=data
-    )
-    return {"detail": "User subscribed."}
+async def proxy_request(service_url: str, request: Request):
+    async with httpx.AsyncClient() as client:
+        response = await client.request(
+            method=request.method,
+            url=f"{service_url}{request.url.path}",
+            params=request.query_params,
+            json=await request.json() if request.method in ["POST", "PUT", "PATCH"] else None,
+            headers=request.headers.raw,
+        )
+    return response
 
 
-@app.post("/api/order/checkout")
-async def order_checkout(data: dict, settings: Annotated[Settings, Depends(get_settings)]):
-    await a_publish_to_rabbitmq(
-        queue_name=settings.queue_name_to_second_service,
-        exchanger=settings.exchanger,
-        routing_key=settings.routing_key_to_second_service,
-        data=data
-    )
-    return {"detail": "Order created."}
+@app.api_route("/users/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
+async def users_proxy(path: str, request: Request):
+    response = await proxy_request(USER_SERVICE_URL, request)
+    return response.json(), response.status_code
+
+
+# @lru_cache
+# def get_settings():
+#     return Settings()
+#
+#
+# @app.post("/api/user/subscribe")
+# def subscribe_user(data: dict, settings: Annotated[Settings, Depends(get_settings)]):
+#     publish_to_rabbitmq(
+#         queue_name=settings.queue_name_to_first_service,
+#         exchanger=settings.exchanger,
+#         routing_key=settings.routing_key_to_first_service,
+#         data=data
+#     )
+#     return {"detail": "User subscribed."}
+#
+#
+# @app.post("/api/order/checkout")
+# async def order_checkout(data: dict, settings: Annotated[Settings, Depends(get_settings)]):
+#     await a_publish_to_rabbitmq(
+#         queue_name=settings.queue_name_to_second_service,
+#         exchanger=settings.exchanger,
+#         routing_key=settings.routing_key_to_second_service,
+#         data=data
+#     )
+#     return {"detail": "Order created."}
 
 
 if __name__ == "__main__":

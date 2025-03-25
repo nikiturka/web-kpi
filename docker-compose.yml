@@ -19,6 +19,7 @@ services:
     restart: always
     depends_on:
       - rabbitmq
+      - user_service
 
   user_service:
     build: ./backend/user_service
