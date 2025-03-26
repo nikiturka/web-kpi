@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import AuthContainer from "./components/AuthContainer";
-import MainPage from "./components/MainPage";
+import AuthContainer from "./components/authentication/AuthContainer.jsx";
+import MainPage from "./components/MainPage.jsx";
 
 const App = () => {
     return (

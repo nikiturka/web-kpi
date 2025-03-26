@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import LoginForm from "./LoginForm";
-import RegisterForm from "./RegisterForm";
-import ToggleBox from "./ToggleBox";
-import "../styles/auth.css";
+import LoginForm from "./LoginForm.jsx";
+import RegisterForm from "./RegisterForm.jsx";
+import ToggleBox from "./ToggleBox.jsx";
+import "../../styles/auth.css";
 
 const AuthContainer = () => {
     const [active, setActive] = useState(false);
