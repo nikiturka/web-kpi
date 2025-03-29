@@ -7,19 +7,19 @@ const LoginForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const username = e.target.username.value;
+        const email = e.target.email.value;
         const password = e.target.password.value;
 
-        if (!username || !password) {
+        if (!email || !password) {
             setError("Both fields are required!");
             return;
         }
 
         try {
-            const response = await fetch("http://localhost:5000/api/login", {
+            const response = await fetch("http://localhost:8000/users/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ email, password }),
             });
 
             const data = await response.json();
@@ -39,8 +39,8 @@ const LoginForm = () => {
         <div className="form-box login">
             <h1>Login</h1>
             <form onSubmit={handleSubmit}>
-                <input type="text" name="username" placeholder="Username" required />
-                <input type="password" name="password" placeholder="Password" required />
+                <input type="email" name="email" placeholder="Email" required/>
+                <input type="password" name="password" placeholder="Password" required/>
                 {error && <p className="error">{error}</p>}
                 <button type="submit">Login</button>
             </form>

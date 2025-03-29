@@ -7,20 +7,20 @@ const RegisterForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const username = e.target.username.value;
+        const name = e.target.username.value;
         const email = e.target.email.value;
         const password = e.target.password.value;
 
-        if (!username || !email || !password) {
+        if (!name || !email || !password) {
             setError("All fields are required!");
             return;
         }
 
         try {
-            const response = await fetch("http://localhost:5000/api/register", {
+            const response = await fetch("http://localhost:8000/users/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, email, password }),
+                body: JSON.stringify({ name, email, password }),
             });
 
             const data = await response.json();
@@ -29,7 +29,7 @@ const RegisterForm = () => {
                 alert("Registration successful!");
                 navigate("/"); // Після реєстрації переходимо на сторінку логіну
             } else {
-                setError(data.message || "Registration failed");
+                setError(data.detail || "Registration failed");
             }
         } catch (err) {
             setError("Server error. Please try again later.");

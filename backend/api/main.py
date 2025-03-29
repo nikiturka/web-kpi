@@ -1,11 +1,30 @@
 import uvicorn
-from fastapi import FastAPI, Request
 import httpx
+
+from fastapi import FastAPI, Request, Response
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI()
 
+
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 # user_service URL for Docker network
-USER_SERVICE_URL = "http://user_service:8001"
+USER_SERVICE_URL = "http://user_service:8002"
 
 
 async def proxy_request(service_url: str, request: Request):
@@ -23,7 +42,7 @@ async def proxy_request(service_url: str, request: Request):
 @app.api_route("/users/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
 async def users_proxy(path: str, request: Request):
     response = await proxy_request(USER_SERVICE_URL, request)
-    return response.json(), response.status_code
+    return Response(content=response.content, status_code=response.status_code, headers=dict(response.headers))
 
 
 # @lru_cache
