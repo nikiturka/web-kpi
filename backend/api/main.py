@@ -1,5 +1,4 @@
 import uvicorn
-from fastapi import FastAPI, Request
 import httpx
 
 from fastapi import FastAPI, Request, Response
@@ -25,7 +24,6 @@ app.add_middleware(
 
 
 # user_service URL for Docker network
-USER_SERVICE_URL = "http://user_service:8001"
 USER_SERVICE_URL = "http://user_service:8002"
 
 
