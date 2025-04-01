@@ -12,7 +12,13 @@ class RoomCreate(BaseModel):
     description: str | None = None
 
 
-class BaseAvailableSlot(BaseModel):
+class CreateAvailableSlot(BaseModel):
+    room_id: uuid.UUID
+    start_time: datetime
+    end_time: datetime
+
+
+class DetailAvailableSlot(BaseModel):
     id: uuid.UUID
     room_id: uuid.UUID
     start_time: str

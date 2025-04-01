@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from .db import get_async_session
 from .models import Room, AvailableSlot, RoomType
-from .schemas import RoomCreate, BaseAvailableSlot
+from .schemas import RoomCreate, DetailAvailableSlot, CreateAvailableSlot
 from .utils import create_test_rooms_and_slots
 
 rooms_router = APIRouter(
@@ -52,7 +52,7 @@ async def create_room(
         raise HTTPException(status_code=400, detail="Invalid room type")
 
 
-@rooms_router.get("/{room_id}/slots", response_model=list[BaseAvailableSlot])
+@rooms_router.get("/{room_id}/slots", response_model=list[DetailAvailableSlot])
 async def get_room_slots(
         room_id: UUID,
         session: AsyncSession = Depends(get_async_session),
@@ -63,3 +63,21 @@ async def get_room_slots(
 
     return rooms
 
+
+@rooms_router.post("/{room_id}/slots")
+async def create_room_slots(
+        slot_data: CreateAvailableSlot,
+        session: AsyncSession = Depends(get_async_session),
+):
+    query = select(Room).filter(Room.id == slot_data.room_id)
+    result = await session.execute(query)
+    room = result.scalar_one_or_none()
+
+    if room is None:
+        return {"error": "Room not found"}
+
+    stmt = insert(AvailableSlot).values(**slot_data.dict())
+    await session.execute(stmt)
+    await session.commit()
+
+    return {"response": 200}
