@@ -6,7 +6,7 @@ from passlib.context import CryptContext
 from .db import get_async_session
 from .models import User
 from .schemas import UserCreate, UserLogin
-
+from .utils import create_default_users
 
 users_router = APIRouter(
     prefix="/users",
@@ -23,6 +23,14 @@ async def get_users(session: AsyncSession = Depends(get_async_session)):
 
     return users
 
+
+@users_router.post("/test-data")
+async def create_test_users(session: AsyncSession = Depends(get_async_session)):
+    try:
+        await create_default_users(session)
+        return {'response': 200}
+    except Exception as e:
+        return {'error': str(e)}
 
 @users_router.post("/register")
 async def register_user(
