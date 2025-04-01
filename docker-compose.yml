@@ -55,9 +55,32 @@ services:
     env_file:
       - backend/user_service/.env
 
+  room_service:
+    build: ./backend/room_service
+    command: uvicorn src.main:app --reload --host 0.0.0.0 --port 8003
+    volumes:
+      - ./backend/room_service:/app/
+    ports:
+      - '8003:8003'
+    depends_on:
+      - room_db
+      - rabbitmq
+
+  room_db:
+    image: postgres
+    volumes:
+      - postgres_data_room:/var/lib/postgresql/data/
+    ports:
+      - '5433:5433'
+    restart: always
+    env_file:
+      - backend/room_service/.env
+
 
 volumes:
   postgres_data_user:
+  postgres_data_room:
+
 
 #  service1:
 #    container_name: template_service1
