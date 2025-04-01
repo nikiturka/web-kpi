@@ -1,12 +1,8 @@
+import uuid
+import bcrypt
 from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
 from .models import User, Role
-import uuid
-from passlib.context import CryptContext
-
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 default_users = [
@@ -30,16 +26,15 @@ async def create_default_users(session: AsyncSession):
     await session.commit()
     print("All users deleted.")
 
-    # Теперь создаем новых пользователей из списка
     for user_data in default_users:
-        # Хешируем пароли
-        user_data['password'] = pwd_context.hash(user_data['password'])
+        hashed_password = bcrypt.hashpw(user_data["password"].encode(), bcrypt.gensalt())
+
         user = User(
             id=uuid.uuid4(),
-            name=user_data['name'],
-            email=user_data['email'],
-            password=user_data['password'],
-            role=user_data['role']
+            name=user_data["name"],
+            email=user_data["email"],
+            password=hashed_password,
+            role=user_data["role"]
         )
         session.add(user)
 
