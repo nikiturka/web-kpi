@@ -1,0 +1,29 @@
+import uuid
+from datetime import datetime
+
+from pydantic import BaseModel, validator
+
+
+class RoomCreate(BaseModel):
+    name: str
+    location: str
+    capacity: int
+    type: str
+    description: str | None = None
+
+
+class BaseAvailableSlot(BaseModel):
+    id: uuid.UUID
+    room_id: uuid.UUID
+    start_time: str
+    end_time: str
+    is_available: bool
+
+    @validator('start_time', 'end_time', pre=True)
+    def format_datetime(cls, value):
+        if isinstance(value, datetime):
+            return value.strftime('%b %d %H:%M')  # Example: 'Feb 17 9:00'
+        return value
+
+    class Config:
+        orm_mode = True
