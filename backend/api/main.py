@@ -25,6 +25,7 @@ app.add_middleware(
 
 # user_service URL for Docker network
 USER_SERVICE_URL = "http://user_service:8002"
+ROOM_SERVICE_URL = "http://room_service:8003"
 
 
 async def proxy_request(service_url: str, request: Request):
@@ -42,6 +43,12 @@ async def proxy_request(service_url: str, request: Request):
 @app.api_route("/users/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
 async def users_proxy(path: str, request: Request):
     response = await proxy_request(USER_SERVICE_URL, request)
+    return Response(content=response.content, status_code=response.status_code, headers=dict(response.headers))
+
+
+@app.api_route("/rooms/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
+async def rooms_proxy(path: str, request: Request):
+    response = await proxy_request(ROOM_SERVICE_URL, request)
     return Response(content=response.content, status_code=response.status_code, headers=dict(response.headers))
 
 
