@@ -1,7 +1,20 @@
 import json
-
 import aio_pika
 import pika
+
+from pydantic_settings import BaseSettings
+
+
+class Settings(BaseSettings):
+
+    exchanger: str = "amq.direct"
+    queue_name_to_first_service: str = "notify_user"
+    queue_name_to_second_service: str = "changebalance_orders"
+    queue_name_to_user_service: str = 'test_queue'
+
+    routing_key_to_first_service: str = "user.mailing"
+    routing_key_to_second_service: str = "orders.checkout"
+    routing_key_to_user_service: str = 'test'
 
 
 def publish_to_rabbitmq(queue_name: str, exchanger: str, routing_key: str, data: dict) -> None:

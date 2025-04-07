@@ -80,18 +80,3 @@ services:
 volumes:
   postgres_data_user:
   postgres_data_room:
-
-
-#  service1:
-#    container_name: template_service1
-#    build: ./backend/service1
-#    volumes:
-#      - ./backend/service1:/service1/
-#    restart: always
-#
-#  service2:
-#    container_name: template_service2
-#    build: ./backend/service2
-#    volumes:
-#      - ./backend/service2:/service2/
-#    restart: always
