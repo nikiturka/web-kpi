@@ -20,22 +20,6 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 http_bearer = HTTPBearer()
 
 
-async def admin_permission(
-        credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
-        session: AsyncSession = Depends(get_async_session),
-):
-    token = credentials.credentials
-    payload = auth_utils.decode_jwt(token=token)
-
-    result = await session.execute(select(User).where(User.email == payload['email']))
-    existing_user = result.scalars().first()
-    if not existing_user or existing_user and existing_user.role != Role.admin:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You do not have permission to perform this action."
-        )
-
-
 @users_router.get("/")
 async def get_users(session: AsyncSession = Depends(get_async_session)):
     query = select(User)

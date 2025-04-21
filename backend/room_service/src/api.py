@@ -1,6 +1,7 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy import select, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -8,11 +9,13 @@ from .db import get_async_session
 from .models import Room, AvailableSlot, RoomType
 from .schemas import RoomCreate, DetailAvailableSlot, CreateAvailableSlot
 from .utils import create_test_rooms_and_slots
+from .producers import Settings, rpc_request
 
 rooms_router = APIRouter(
     prefix="/rooms",
     tags=["Rooms"],
 )
+http_bearer = HTTPBearer()
 
 
 @rooms_router.post("/test-data")
@@ -36,8 +39,23 @@ async def get_rooms(session: AsyncSession = Depends(get_async_session)):
 @rooms_router.post("/")
 async def create_room(
         room_data: RoomCreate,
-        session: AsyncSession = Depends(get_async_session)
+        session: AsyncSession = Depends(get_async_session),
+        credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
 ):
+    token = credentials.credentials
+
+    result = await rpc_request(
+        queue_name=Settings.get_user_queue,
+        exchanger=Settings.exchanger,
+        routing_key=Settings.routing_key_to_get_user_queue,
+        data={"token": token}
+    )
+    if result["status"] == "error":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=result.get("detail", result.get("detail"))
+        )
+
     try:
         room_dict = room_data.model_dump()
         room_dict["type"] = RoomType(room_dict["type"])
@@ -68,7 +86,22 @@ async def get_room_slots(
 async def create_room_slots(
         slot_data: CreateAvailableSlot,
         session: AsyncSession = Depends(get_async_session),
+        credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
 ):
+    token = credentials.credentials
+
+    result = await rpc_request(
+        queue_name=Settings.get_user_queue,
+        exchanger=Settings.exchanger,
+        routing_key=Settings.routing_key_to_get_user_queue,
+        data={"token": token}
+    )
+    if result["status"] == "error":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=result.get("detail", result.get("detail"))
+        )
+
     query = select(Room).filter(Room.id == slot_data.room_id)
     result = await session.execute(query)
     room = result.scalar_one_or_none()
