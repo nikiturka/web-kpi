@@ -76,7 +76,29 @@ services:
     env_file:
       - backend/room_service/.env
 
+  booking_service:
+    build: ./backend/booking_service
+    command: uvicorn src.main:app --reload --host 0.0.0.0 --port 8004
+    volumes:
+      - ./backend/booking_service:/app/
+    ports:
+      - '8004:8004'
+    depends_on:
+      - booking_db
+      - rabbitmq
+
+  booking_db:
+    image: postgres
+    volumes:
+      - postgres_data_booking:/var/lib/postgresql/data/
+    ports:
+      - '5434:5434'
+    restart: always
+    env_file:
+      - backend/booking_service/.env
+
 
 volumes:
   postgres_data_user:
   postgres_data_room:
+  postgres_data_booking:

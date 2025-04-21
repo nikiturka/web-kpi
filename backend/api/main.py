@@ -26,6 +26,7 @@ app.add_middleware(
 # user_service URL for Docker network
 USER_SERVICE_URL = "http://user_service:8002"
 ROOM_SERVICE_URL = "http://room_service:8003"
+BOOKING_SERVICE_URL = "http://booking_service:8004"
 
 
 async def proxy_request(service_url: str, request: Request):
@@ -52,31 +53,10 @@ async def rooms_proxy(path: str, request: Request):
     return Response(content=response.content, status_code=response.status_code, headers=dict(response.headers))
 
 
-# @lru_cache
-# def get_settings():
-#     return Settings()
-#
-#
-# @app.post("/api/user/subscribe")
-# def subscribe_user(data: dict, settings: Annotated[Settings, Depends(get_settings)]):
-#     publish_to_rabbitmq(
-#         queue_name=settings.queue_name_to_first_service,
-#         exchanger=settings.exchanger,
-#         routing_key=settings.routing_key_to_first_service,
-#         data=data
-#     )
-#     return {"detail": "User subscribed."}
-#
-#
-# @app.post("/api/order/checkout")
-# async def order_checkout(data: dict, settings: Annotated[Settings, Depends(get_settings)]):
-#     await a_publish_to_rabbitmq(
-#         queue_name=settings.queue_name_to_second_service,
-#         exchanger=settings.exchanger,
-#         routing_key=settings.routing_key_to_second_service,
-#         data=data
-#     )
-#     return {"detail": "Order created."}
+@app.api_route("/bookings/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
+async def bookings_proxy(path: str, request: Request):
+    response = await proxy_request(BOOKING_SERVICE_URL, request)
+    return Response(content=response.content, status_code=response.status_code, headers=dict(response.headers))
 
 
 if __name__ == "__main__":
