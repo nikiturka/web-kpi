@@ -85,6 +85,37 @@ async def room_exists(message: aio_pika.IncomingMessage):
         logger.info("Room check completed.")
 
 
+async def update_available_slots(message: aio_pika.IncomingMessage):
+    async with message.process():
+        body = json.loads(message.body)
+        room_id = uuid.UUID(body.get("room_id"))
+        start_time = body.get("start_time")
+        end_time = body.get("end_time")
+
+        async with session_factory() as session:
+            stmt = select(Room).where(Room.id == room_id)
+            result = await session.execute(stmt)
+            room = result.scalar_one_or_none()
+
+            if room:
+                start = datetime.fromisoformat(start_time)
+                end = datetime.fromisoformat(end_time)
+
+                stmt = (
+                    update(AvailableSlot)
+                    .where(
+                        AvailableSlot.room_id == room_id,
+                        AvailableSlot.start_time >= start,
+                        AvailableSlot.end_time <= end,
+                    )
+                    .values(is_available=True)
+                )
+                await session.execute(stmt)
+                await session.commit()
+
+                logger.info("Available slots updated.")
+
+
 async def consume_queue(queue_name, callback, routing_key):
     max_retries = 5
     for attempt in range(1, max_retries + 1):
@@ -112,4 +143,5 @@ async def consume_queue(queue_name, callback, routing_key):
 async def start_consuming():
     await asyncio.gather(
         consume_queue("check_room_exists_queue", room_exists, 'room.exists'),
+        consume_queue("update_available_slots_queue", update_available_slots, 'slots.update'),
     )

@@ -77,13 +77,27 @@ async def create_booking_for_user(
 
 
 @booking_router.delete("/{booking_id}")
-async def delete_booking(booking_id: int, session: AsyncSession = Depends(get_async_session)):
+async def delete_booking(booking_id: uuid.UUID, session: AsyncSession = Depends(get_async_session)):
     query = select(Booking).where(Booking.id == booking_id)
     existing_booking = await session.execute(query)
     booking = existing_booking.scalar()
 
     if booking is None:
         raise HTTPException(status_code=404, detail="Booking not found")
+
+    start_time = floor_to_hour(booking.start_time)
+    end_time = ceil_to_hour(booking.end_time)
+
+    await rpc_request(
+        queue_name=Settings.update_available_slots_queue,
+        exchanger=Settings.exchanger,
+        routing_key=Settings.routing_key_to_update_available_slots_queue,
+        data={
+            "room_id": str(booking.room_id),
+            "start_time": start_time.isoformat(),
+            "end_time": end_time.isoformat()
+        }
+    )
 
     delete_stmt = delete(Booking).where(Booking.id == booking_id)
     await session.execute(delete_stmt)
