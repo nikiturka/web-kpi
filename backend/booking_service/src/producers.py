@@ -14,9 +14,11 @@ class RoomProducerSettings(BaseSettings):
 
     user_exists_queue: str = "check_user_exists_queue"
     room_exists_queue: str = "check_room_exists_queue"
+    update_available_slots_queue: str = "update_available_slots_queue"
 
     routing_key_to_user_exists_queue: str = "user.exists"
     routing_key_to_room_exists_queue: str = "room.exists"
+    routing_key_to_update_available_slots_queue: str = "slots.update"
 
 
 Settings = RoomProducerSettings()
