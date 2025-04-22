@@ -1,3 +1,4 @@
+from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -28,8 +29,15 @@ async def create_test_data(session: AsyncSession = Depends(get_async_session)):
 
 
 @rooms_router.get("/")
-async def get_rooms(session: AsyncSession = Depends(get_async_session)):
+async def get_rooms(
+        session: AsyncSession = Depends(get_async_session),
+        room_type: Optional[RoomType] = None,
+):
     query = select(Room)
+
+    if room_type:
+        query = query.where(Room.type == room_type)
+
     res = await session.execute(query)
     rooms = res.scalars().all()
 
