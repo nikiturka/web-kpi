@@ -9,6 +9,7 @@ from .db import get_async_session
 from .models import Booking, BookingStatus
 from .producers import rpc_request, Settings
 from .schemas import BookingCreate
+from .utils import floor_to_hour, ceil_to_hour
 
 booking_router = APIRouter(
     prefix="/bookings",
@@ -37,6 +38,9 @@ async def create_booking_for_user(
 ):
     token = credentials.credentials
 
+    booking_data.start_time = floor_to_hour(booking_data.start_time)
+    booking_data.end_time = ceil_to_hour(booking_data.end_time)
+
     user_exists = await rpc_request(
         queue_name=Settings.user_exists_queue,
         exchanger=Settings.exchanger,
@@ -53,7 +57,11 @@ async def create_booking_for_user(
         queue_name=Settings.room_exists_queue,
         exchanger=Settings.exchanger,
         routing_key=Settings.routing_key_to_room_exists_queue,
-        data={"room_id": str(booking_data.room_id)}
+        data={
+            "room_id": str(booking_data.room_id),
+            "start_time": booking_data.start_time.isoformat(),
+            "end_time": booking_data.end_time.isoformat()
+        }
     )
     if room_exists["status"] == "error":
         raise HTTPException(
