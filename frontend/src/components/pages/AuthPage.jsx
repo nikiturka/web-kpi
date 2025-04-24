@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import LoginForm from "./LoginForm.jsx";
-import RegisterForm from "./RegisterForm.jsx";
-import ToggleBox from "./ToggleBox.jsx";
-import "../../styles/auth.css";
+import LoginForm from "../authentication/LoginForm.jsx";
+import RegisterForm from "../authentication/RegisterForm.jsx";
+import ToggleBox from "../authentication/ToggleBox.jsx";
+import "../../styles/AuthComponents.css"; // Імпортуємо стилі для компонента
 
-const AuthContainer = () => {
+const AuthPage = () => {
     const [active, setActive] = useState(false);
     const [transitioning, setTransitioning] = useState(false);
 
@@ -24,4 +24,4 @@ const AuthContainer = () => {
     );
 };
 
-export default AuthContainer;
+export default AuthPage;

@@ -1,4 +1,5 @@
 import React from "react";
+import "../../styles/AuthComponents.css"; // Імпортуємо стилі для компонента
 
 const ToggleBox = ({ setActive }) => {
     return (

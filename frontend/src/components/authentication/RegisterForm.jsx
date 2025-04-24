@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "../../styles/AuthComponents.css"; // Імпортуємо стилі для компонента
 
 const RegisterForm = () => {
     const [error, setError] = useState("");
@@ -26,7 +27,7 @@ const RegisterForm = () => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    name: username,  // Змінено `username` → `name` так на беці мб зміню
+                    name: username,
                     email,
                     password,
                 }),
