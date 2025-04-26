@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "../../styles/AuthComponents.css"; // Імпортуємо стилі для компонента
 
 const LoginForm = () => {
     const [error, setError] = useState("");
@@ -11,7 +12,7 @@ const LoginForm = () => {
         setError("");
         setLoading(true);
 
-        const email = e.target.email.value; // Замінено username → email, щоб відповідало бекенду
+        const email = e.target.email.value;
         const password = e.target.password.value;
 
         if (!email || !password) {
@@ -31,8 +32,8 @@ const LoginForm = () => {
 
             if (response.ok) {
                 alert("Login successful!");
-                localStorage.setItem("token", data.token || "dummy_token"); // Додав перевірку токена
-                navigate("/main"); // Перехід на головну сторінку
+                localStorage.setItem("token", data.token || "dummy_token");
+                navigate("/main");
             } else {
                 setError(data.detail || "Invalid credentials");
             }
