@@ -7,8 +7,7 @@ from starlette import status
 
 from .db import get_async_session
 from .models import User, Role
-from .schemas import UserCreate, UserLogin, UserDetail
-from .utils import create_default_users
+from .schemas import UserCreate, UserLogin
 from .auth import utils as auth_utils
 
 
@@ -27,15 +26,6 @@ async def get_users(session: AsyncSession = Depends(get_async_session)):
     users = res.scalars().all()
 
     return users
-
-
-@users_router.post("/test-data")
-async def create_test_users(session: AsyncSession = Depends(get_async_session)):
-    try:
-        await create_default_users(session)
-        return {'response': 200}
-    except Exception as e:
-        return {'error': str(e)}
 
 
 @users_router.post("/register")

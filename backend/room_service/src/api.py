@@ -19,15 +19,6 @@ rooms_router = APIRouter(
 http_bearer = HTTPBearer()
 
 
-@rooms_router.post("/test-data")
-async def create_test_data(session: AsyncSession = Depends(get_async_session)):
-    try:
-        await create_test_rooms_and_slots(session)
-        return {'response': 200}
-    except Exception as e:
-        return {'error': str(e)}
-
-
 @rooms_router.get("/")
 async def get_rooms(
         session: AsyncSession = Depends(get_async_session),

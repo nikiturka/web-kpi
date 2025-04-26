@@ -79,5 +79,3 @@ async def create_test_rooms_and_slots(session: AsyncSession):
 
     session.add_all(slots)
     await session.commit()
-
-    print("Test rooms and slots have been created successfully.")

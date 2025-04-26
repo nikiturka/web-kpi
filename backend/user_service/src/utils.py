@@ -24,7 +24,6 @@ default_users = [
 async def create_default_users(session: AsyncSession):
     await session.execute(delete(User))
     await session.commit()
-    print("All users deleted.")
 
     for user_data in default_users:
         hashed_password = bcrypt.hashpw(user_data["password"].encode(), bcrypt.gensalt())
@@ -39,4 +38,3 @@ async def create_default_users(session: AsyncSession):
         session.add(user)
 
     await session.commit()
-    print("Default users created: admin@example.com and user@example.com")
