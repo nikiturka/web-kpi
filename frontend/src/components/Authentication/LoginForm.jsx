@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../styles/AuthComponents.css"; // Імпортуємо стилі для компонента
+import "../../styles/AuthComponents.css";
 
 const LoginForm = () => {
     const [error, setError] = useState("");
+    const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
+        setMessage("");
         setLoading(true);
 
         const email = e.target.email.value;
@@ -31,9 +33,9 @@ const LoginForm = () => {
             const data = await response.json();
 
             if (response.ok) {
-                alert("Login successful!");
+                setMessage("Login successful!");
                 localStorage.setItem("token", data.token || "dummy_token");
-                navigate("/main");
+                setTimeout(() => navigate("/rooms"), 1000);
             } else {
                 setError(data.detail || "Invalid credentials");
             }
@@ -50,6 +52,7 @@ const LoginForm = () => {
             <form onSubmit={handleSubmit}>
                 <input type="email" name="email" placeholder="Email" required />
                 <input type="password" name="password" placeholder="Password" required />
+                {message && <p className="success">{message}</p>}
                 {error && <p className="error">{error}</p>}
                 <button type="submit" disabled={loading}>
                     {loading ? "Logging in..." : "Login"}

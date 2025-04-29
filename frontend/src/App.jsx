@@ -1,14 +1,14 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AuthPage from "./components/pages/AuthPage.jsx";
-import MainPage from "./components/pages/MainPage.jsx";
+import RoomsPage from "./components/pages/RoomsPage.jsx";
 
 const App = () => {
     return (
         <Router>
             <Routes>
                 <Route path="/" element={<AuthPage />} />
-                <Route path="/main" element={<MainPage />} />
+                <Route path="/rooms" element={<RoomsPage />} />
 
             </Routes>
         </Router>

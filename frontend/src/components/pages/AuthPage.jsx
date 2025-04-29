@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import LoginForm from "../authentication/LoginForm.jsx";
-import RegisterForm from "../authentication/RegisterForm.jsx";
-import ToggleBox from "../authentication/ToggleBox.jsx";
+import LoginForm from "../Authentication/LoginForm.jsx";
+import RegisterForm from "../Authentication/RegisterForm.jsx";
+import ToggleBox from "../Authentication/ToggleBox.jsx";
 import "../../styles/AuthComponents.css"; // Імпортуємо стилі для компонента
 
 const AuthPage = () => {

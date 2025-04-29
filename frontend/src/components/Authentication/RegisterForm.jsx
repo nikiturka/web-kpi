@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../styles/AuthComponents.css"; // Імпортуємо стилі для компонента
+import "../../styles/AuthComponents.css";
 
 const RegisterForm = () => {
     const [error, setError] = useState("");
+    const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
+        setMessage("");
         setLoading(true);
 
         const username = e.target.username.value;
@@ -26,18 +28,14 @@ const RegisterForm = () => {
             const response = await fetch("http://127.0.0.1:8000/users/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    name: username,
-                    email,
-                    password,
-                }),
+                body: JSON.stringify({ name: username, email, password }),
             });
 
             const data = await response.json();
 
             if (response.ok) {
-                alert("Registration successful!");
-                navigate("/");
+                setMessage("Registration successful!");
+                setTimeout(() => navigate("/"), 1000);
             } else {
                 setError(data.detail || "Registration failed");
             }
@@ -55,6 +53,7 @@ const RegisterForm = () => {
                 <input type="text" name="username" placeholder="Username" required />
                 <input type="email" name="email" placeholder="Email" required />
                 <input type="password" name="password" placeholder="Password" required />
+                {message && <p className="success">{message}</p>}
                 {error && <p className="error">{error}</p>}
                 <button type="submit" disabled={loading}>
                     {loading ? "Registering..." : "Register"}
