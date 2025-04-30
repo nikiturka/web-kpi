@@ -1,0 +1,29 @@
+.rooms-page {
+    padding: 2rem;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #e0e5ec, #d4d9e2); /* Узгоджено з іншими */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.rooms-page h1 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.rooms-page select {
+    margin-bottom: 2rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
+
+.room-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+}

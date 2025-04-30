@@ -7,9 +7,8 @@ const RoomsPage = () => {
     const [rooms, setRooms] = useState([]);
     const [selectedRoomId, setSelectedRoomId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [filterType, setFilterType] = useState("");  // Фільтр типу кімнати
+    const [filterType, setFilterType] = useState("");
 
-    // Функція для отримання кімнат із серверу
     const fetchRooms = async (type = "") => {
         try {
             let url = "http://127.0.0.1:8000/rooms/";
@@ -24,7 +23,7 @@ const RoomsPage = () => {
             }
 
             const data = await response.json();
-            setRooms(data); // Оновлюємо список кімнат
+            setRooms(data);
         } catch (error) {
             console.error("Error fetching rooms:", error);
         }
@@ -44,7 +43,6 @@ const RoomsPage = () => {
         <div className="rooms-page">
             <h1>Доступні кімнати</h1>
 
-            {/* Фільтр типу кімнати */}
             <select value={filterType} onChange={(e) => setFilterType(e.target.value)}>
                 <option value="">Усі кімнати</option>
                 <option value="meeting">Переговорна кімната</option>
