@@ -67,6 +67,7 @@ async def login_user(
         raise unauthorized_exc
 
     payload = {
+        "user_id": str(existing_user.id),
         "email": existing_user.email,
         "role": existing_user.role.value
     }
