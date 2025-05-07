@@ -1,0 +1,47 @@
+.add-slot-modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-height: 300px;
+}
+
+.slot-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+    z-index: 1001;
+}
+
+.date-picker-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.date-picker-calendar {
+    z-index: 1002 !important;
+}
+
+.date-picker-popper {
+    z-index: 1003 !important;
+    position: relative !important;
+}
+
+/*
+.confirm-button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: fit-content;
+    align-self: center;
+}
+
+.confirm-button:hover {
+    background-color: #45a049;
+}*/

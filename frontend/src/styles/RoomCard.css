@@ -2,21 +2,22 @@
     background: #fff;
     padding: 1.5rem;
     border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Більша тінь для глибини */
     width: 280px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    transition: transform 0.2s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .room-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-10px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2); /* Покращений ефект при наведенні */
 }
 
 .room-card h3 {
     margin-bottom: 0.5rem;
-    font-size: 1.25rem;
+    font-size: 1.4rem; /* Трохи більший розмір для заголовків */
     color: #222;
 }
 
@@ -28,9 +29,9 @@
 
 .room-card button {
     margin-top: 1rem;
-    background-color: #4f46e5;
+    background-color: #4338ca;
     color: white;
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1.5rem;
     border: none;
     border-radius: 8px;
     cursor: pointer;

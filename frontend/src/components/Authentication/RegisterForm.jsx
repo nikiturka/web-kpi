@@ -2,16 +2,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/AuthComponents.css";
 
-const RegisterForm = () => {
+const RegisterForm = ({ onShowToast }) => {
     const [error, setError] = useState("");
-    const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
-        setMessage("");
         setLoading(true);
 
         const username = e.target.username.value;
@@ -19,7 +17,9 @@ const RegisterForm = () => {
         const password = e.target.password.value;
 
         if (!username || !email || !password) {
-            setError("All fields are required!");
+            const errorMsg = "All fields are required!";
+            setError(errorMsg);
+            onShowToast?.(errorMsg);
             setLoading(false);
             return;
         }
@@ -34,13 +34,17 @@ const RegisterForm = () => {
             const data = await response.json();
 
             if (response.ok) {
-                setMessage("Registration successful!");
-                setTimeout(() => navigate("/"), 1000);
+                onShowToast?.("Registration successful!");
+                navigate("/");
             } else {
-                setError(data.detail || "Registration failed");
+                const errorMsg = data.detail || "Registration failed";
+                setError(errorMsg);
+                onShowToast?.(errorMsg);
             }
-        } catch (err) {
-            setError("Server error. Please try again later.");
+        } catch {
+            const errorMsg = "Server error. Please try again later.";
+            setError(errorMsg);
+            onShowToast?.(errorMsg);
         } finally {
             setLoading(false);
         }
@@ -53,7 +57,6 @@ const RegisterForm = () => {
                 <input type="text" name="username" placeholder="Username" required />
                 <input type="email" name="email" placeholder="Email" required />
                 <input type="password" name="password" placeholder="Password" required />
-                {message && <p className="success">{message}</p>}
                 {error && <p className="error">{error}</p>}
                 <button type="submit" disabled={loading}>
                     {loading ? "Registering..." : "Register"}

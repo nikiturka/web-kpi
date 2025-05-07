@@ -1,7 +1,16 @@
+.modal-scroll-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+    max-height: calc(70vh - 120px);
+}
+
 .slot-list {
     margin-top: 1rem;
     list-style: none;
     padding: 0;
+    overflow-y: auto;
+    max-height: calc(70vh - 180px);
 }
 
 .slot-list li {
@@ -11,4 +20,58 @@
     border-radius: 8px;
     font-size: 1rem;
     color: #444;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.slot-list li:hover {
+    background: #e6f0ff;
+}
+
+.slot-list li.selected {
+    background: #cce0ff;
+    font-weight: bold;
+}
+
+.slot-modal-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 1rem;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.confirm-button {
+    padding: 0.75rem 1.5rem;
+    background-color: #4338ca;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    margin: 1rem auto 0 auto;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.confirm-button:hover {
+    background-color: #4338ca;
+}
+
+.confirm-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.add-slot-button {
+    background-color: #4338ca;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.add-slot-button:hover {
+    background-color: #4338ca;
 }

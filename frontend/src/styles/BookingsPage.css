@@ -1,0 +1,23 @@
+.bookings-page {
+    padding: 2rem;
+    min-height: 100vh;
+    min-width: 100vw;
+    background: linear-gradient(135deg, #f1f3f6, #e5eaf1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.bookings-page h1 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.booking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 600px;
+}

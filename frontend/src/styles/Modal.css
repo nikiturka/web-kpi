@@ -8,7 +8,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 999;
+    z-index: 1000;
+    overflow: visible;
 }
 
 .modal-content {
@@ -17,8 +18,12 @@
     border-radius: 16px;
     width: 400px;
     max-width: 90%;
+    max-height: 90vh;
     position: relative;
     animation: fadeIn 0.3s ease;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
 }
 
 @keyframes fadeIn {
@@ -29,10 +34,15 @@
 .modal-close {
     position: absolute;
     top: 10px;
-    right: 15px;
+    right: 0.9px;
     font-size: 1.5rem;
     background: none;
     border: none;
     cursor: pointer;
     color: #b1b1b1;
+    z-index: 1001;
+}
+.modal-close:hover {
+    color: #888;
+    transform: scale(1);
 }

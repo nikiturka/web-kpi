@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import RoomCard from "../RoomList/RoomCard";
 import SlotModal from "../RoomList/SlotModal";
+import ToastModal from "../UI/ToastModal";
 import "../../styles/RoomsPage.css";
 
 const RoomsPage = () => {
@@ -8,6 +9,7 @@ const RoomsPage = () => {
     const [selectedRoomId, setSelectedRoomId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [filterType, setFilterType] = useState("");
+    const [toastMessage, setToastMessage] = useState("");
 
     const fetchRooms = async (type = "") => {
         try {
@@ -29,7 +31,6 @@ const RoomsPage = () => {
         }
     };
 
-    // Оновлюємо кімнати при зміні фільтра
     useEffect(() => {
         fetchRooms(filterType);
     }, [filterType]);
@@ -41,15 +42,19 @@ const RoomsPage = () => {
 
     return (
         <div className="rooms-page">
-            <h1>Доступні кімнати</h1>
+            <h1>Available Rooms</h1>
 
-            <select value={filterType} onChange={(e) => setFilterType(e.target.value)}>
-                <option value="">Усі кімнати</option>
-                <option value="meeting">Переговорна кімната</option>
-                <option value="workspace">Робоче місце</option>
-                <option value="conference_hall">Конференц-зал</option>
-                <option value="lounge">Лаунж-зона</option>
-                <option value="training_room">Тренінгова кімната</option>
+            <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value)}
+                className="room-filter"
+            >
+                <option value="">All rooms</option>
+                <option value="meeting">Meeting Room</option>
+                <option value="workspace">Workspace</option>
+                <option value="conference_hall">Conference Hall</option>
+                <option value="lounge">Lounge Area</option>
+                <option value="training_room">Training Room</option>
             </select>
 
             <div className="room-list">
@@ -58,12 +63,16 @@ const RoomsPage = () => {
                 ))}
             </div>
 
-            {/* Модальне вікно для перегляду слотів */}
             <SlotModal
                 roomId={selectedRoomId}
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
+                onShowToast={(msg) => setToastMessage(msg)}
             />
+
+            {toastMessage && (
+                <ToastModal message={toastMessage} onClose={() => setToastMessage("")} />
+            )}
         </div>
     );
 };

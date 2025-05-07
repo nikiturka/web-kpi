@@ -10,7 +10,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #e0e5ec, #d4d9e2); /* Підходить до інших стилів */
+    background: linear-gradient(135deg, #e0e5ec, #d4d9e2);
 }
 
 .auth-container {
@@ -42,9 +42,9 @@ body {
 }
 
 h1 {
-    font-size: 1.75rem; /* Узгоджено з іншими стилями */
+    font-size: 1.75rem;
     margin-bottom: 20px;
-    color: #222; /* Темніший текст */
+    color: #222;
 }
 
 input {
@@ -60,7 +60,7 @@ input {
 }
 
 input::placeholder {
-    color: #a0aec0; /* Світлий placeholder */
+    color: #a0aec0;
 }
 
 input:focus {
@@ -72,7 +72,7 @@ input:focus {
 button {
     width: 100%;
     padding: 12px;
-    background-color: #4f46e5; /* Узгоджено з іншими компонентами */
+    background-color: #4f46e5;
     color: white;
     border: none;
     border-radius: 10px;
@@ -83,20 +83,8 @@ button {
 }
 
 button:hover {
-    background-color: #4338ca; /* Теж узгоджено з іншими */
+    background-color: #4338ca;
     transform: translateY(-2px);
-}
-
-.error {
-    color: #ff4d4f;
-    margin-bottom: 10px;
-    font-weight: 500;
-}
-
-.success {
-    color: #52c41a;
-    margin-bottom: 10px;
-    font-weight: bold;
 }
 
 .toggle-box {
@@ -109,7 +97,7 @@ button:hover {
 
 .toggle-btn {
     background: none;
-    color: #4f46e5; /* Узгоджено з іншими компонентами */
+    color: #4f46e5;
     cursor: pointer;
     font-size: 14px;
     padding: 8px 16px;
@@ -119,9 +107,9 @@ button:hover {
 }
 
 .toggle-btn:hover {
-    background-color: #e0e7ff;
+    background-color: #f3f4f6;
     color: #4338ca;
-    border-color: #e0e7ff;
+    border-color: #f3f4f6;
 }
 
 .toggle-btn:focus {

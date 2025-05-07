@@ -16,15 +16,12 @@ const BookingsPage = () => {
         if (token) {
             try {
                 const decoded = JSON.parse(atob(token.split('.')[1]));
-                const userId = decoded?.user_id;
-                if (userId) {
-                    setUserId(userId);
-                } else {
-                    setError("Failed to get user ID. Please login again.");
+                if (decoded?.user_id) {
+                    setUserId(decoded.user_id);
                 }
             } catch (err) {
                 console.error("Failed to decode token:", err);
-                setError("Invalid token. Please login again.");
+                setError("Failed to authenticate. Please login again.");
             }
         }
     }, []);

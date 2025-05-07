@@ -17,11 +17,11 @@ class DetailAvailableSlot(BaseModel):
     end_time: str
     is_available: bool
 
-    @validator('start_time', 'end_time', pre=True)
+"""     @validator('start_time', 'end_time', pre=True)
     def format_datetime(cls, value):
         if isinstance(value, datetime):
             return value.strftime('%b %d %H:%M')  # Example: 'Feb 17 9:00'
-        return value
+        return value """
 
     class Config:
         orm_mode = True
