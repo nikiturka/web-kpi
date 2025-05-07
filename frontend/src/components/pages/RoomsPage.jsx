@@ -36,6 +36,7 @@ const RoomsPage = () => {
     }, [filterType]);
 
     const handleViewSlots = (roomId) => {
+        // When the "View Slots" button is clicked, set the selected room ID and open the modal
         setSelectedRoomId(roomId);
         setIsModalOpen(true);
     };

@@ -1,133 +1,199 @@
 import React, { useEffect, useState } from "react";
-import BookingCard from "../Bookings/BookingCard";
-import CancelModal from "../Bookings/CancelModal";
-import "../../styles/BookingsPage.css";
+import { useNavigate } from "react-router-dom";
+import Modal from "../UI/Modal";
+import AddSlotModal from "./AddSlotModal";
+import "../../styles/SlotModal.css";
 
-const BookingsPage = () => {
-    const [userId, setUserId] = useState(null);
-    const [bookings, setBookings] = useState([]);
-    const [selectedBookingId, setSelectedBookingId] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
+const SlotModal = ({ roomId, isOpen, onClose, onShowToast }) => {
+    const [slots, setSlots] = useState([]);
+    const [selectedSlot, setSelectedSlot] = useState(null);
+    const [isAddSlotOpen, setIsAddSlotOpen] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
+    const navigate = useNavigate();
 
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            try {
-                const decoded = JSON.parse(atob(token.split('.')[1]));
-                const userId = decoded?.user_id;
-                if (userId) {
-                    setUserId(userId);
-                } else {
-                    setError("Failed to get user ID. Please login again.");
-                }
-            } catch (err) {
-                console.error("Failed to decode token:", err);
-                setError("Invalid token. Please login again.");
-            }
-        }
-    }, []);
+    const dateFormatter = new Intl.DateTimeFormat('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
 
-    useEffect(() => {
-        if (userId) {
-            fetchBookings();
-        }
-    }, [userId]);
+    const timeFormatter = new Intl.DateTimeFormat('en-GB', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
 
-    const fetchBookings = async () => {
-        setIsLoading(true);
-        setError(null);
+    const fetchSlots = async () => {
         try {
-            const response = await fetch(`http://localhost:8000/bookings/${userId}/`, {
+            const response = await fetch(`http://localhost:8000/rooms/${roomId}/slots`);
+            if (!response.ok) {
+                throw new Error("Failed to fetch slots");
+            }
+            const data = await response.json();
+            const sortedSlots = data.sort((a, b) =>
+                new Date(a.start_time) - new Date(b.start_time)
+            );
+            setSlots(sortedSlots);
+        } catch {
+            onShowToast?.("Error loading available slots. Please try again later.");
+        }
+    };
+
+    const hasDuplicateSlot = (newStartTime, newEndTime) => {
+        return slots.some(slot => {
+            const existingStart = new Date(slot.start_time).getTime();
+            const existingEnd = new Date(slot.end_time).getTime();
+            const newStart = new Date(newStartTime).getTime();
+            const newEnd = new Date(newEndTime).getTime();
+
+            return (
+                (newStart >= existingStart && newStart < existingEnd) ||
+                (newEnd > existingStart && newEnd <= existingEnd) ||
+                (newStart <= existingStart && newEnd >= existingEnd)
+            );
+        });
+    };
+
+    useEffect(() => {
+        const checkIfAdmin = () => {
+            try {
+                const token = localStorage.getItem("token");
+                if (!token) return;
+                const decoded = JSON.parse(atob(token.split('.')[1]));
+                setIsAdmin(decoded?.role === "admin");
+            } catch {
+                console.error("Failed to decode token");
+            }
+        };
+
+        if (isOpen && roomId) {
+            fetchSlots();
+            setSelectedSlot(null);
+            checkIfAdmin();
+        }
+    }, [isOpen, roomId]);
+
+    const handleSlotAdded = (newSlot) => {
+        setSlots(prevSlots => {
+            const updatedSlots = [...prevSlots, newSlot];
+            return updatedSlots.sort((a, b) =>
+                new Date(a.start_time) - new Date(b.start_time)
+            );
+        });
+        setIsAddSlotOpen(false);
+        onShowToast?.("Slot successfully added.");
+    };
+
+    const handleConfirmBooking = async () => {
+        if (!selectedSlot) return;
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+            onShowToast?.("Authorization token missing");
+            return;
+        }
+
+        try {
+            const decodedToken = JSON.parse(atob(token.split('.')[1]));
+            if (decodedToken.exp * 1000 < Date.now()) {
+                onShowToast?.("Your session has expired. Please login again.");
+                return;
+            }
+        } catch {
+            onShowToast?.("Invalid token format");
+            return;
+        }
+
+        const payload = {
+            room_id: roomId,
+            start_time: new Date(selectedSlot.start_time).toISOString(),
+            end_time: new Date(selectedSlot.end_time).toISOString()
+        };
+
+        try {
+            const response = await fetch("http://localhost:8000/bookings/", {
+                method: "POST",
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem("token")}`
-                }
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
             });
 
             if (!response.ok) {
-                throw new Error(`Failed to fetch bookings: ${response.status}`);
+                const errorData = await response.json();
+                const message = errorData.detail || "Failed to create booking";
+                onShowToast?.(`Booking error: ${message}`);
+                return;
             }
 
-            const data = await response.json();
-            setBookings(data);
+            onShowToast?.("Booking successful!");
+            onClose();
+            navigate("/bookings");
         } catch (error) {
-            console.error("Error fetching bookings:", error);
-            setError("Failed to load bookings. Please try again later.");
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleRequestCancel = (bookingId) => {
-        setSelectedBookingId(bookingId);
-        setIsModalOpen(true);
-    };
-
-    const handleConfirmCancel = async () => {
-        setIsLoading(true);
-        setError(null);
-        try {
-            const response = await fetch(
-                `http://localhost:8000/bookings/${selectedBookingId}`,
-                {
-                    method: "DELETE",
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem("token")}`
-                    }
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error(`Failed to cancel booking: ${response.status}`);
-            }
-
-            await fetchBookings();
-            setIsModalOpen(false);
-        } catch (error) {
-            console.error("Error cancelling booking:", error);
-            setError("Failed to cancel booking. Please try again.");
-        } finally {
-            setIsLoading(false);
+            onShowToast?.(`Booking error: ${error.message}`);
         }
     };
 
     return (
-        <div className="bookings-page">
-            <h1>My Bookings</h1>
+        <>
+            <Modal isOpen={isOpen} onClose={onClose}>
+                <div className="modal-scroll-content">
+                    <h2>Available slots</h2>
+                    {slots.length === 0 ? (
+                        <p>No available slots</p>
+                    ) : (
+                        <ul className="slot-list">
+                            {slots.map((slot) => {
+                                const isSelected = selectedSlot && selectedSlot.id === slot.id;
+                                const startTime = new Date(slot.start_time);
+                                const endTime = new Date(slot.end_time);
 
-            {error && (
-                <div className="error-message">
-                    {error}
-                    <button onClick={fetchBookings}>Retry</button>
+                                return (
+                                    <li
+                                        key={slot.id}
+                                        onClick={() => setSelectedSlot(slot)}
+                                        className={isSelected ? "selected" : ""}
+                                    >
+                                        {`${dateFormatter.format(startTime)} ${timeFormatter.format(startTime)} — ${timeFormatter.format(endTime)}`}
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    )}
                 </div>
-            )}
 
-            {isLoading && bookings.length === 0 ? (
-                <div className="loading-spinner">Loading...</div>
-            ) : bookings.length === 0 ? (
-                <p className="no-bookings">No active bookings found</p>
-            ) : (
-                <div className="booking-list">
-                    {bookings.map((booking) => (
-                        <BookingCard
-                            key={booking.id}
-                            booking={booking}
-                            onCancel={handleRequestCancel}
-                            isCanceling={isLoading && selectedBookingId === booking.id}
-                        />
-                    ))}
+                <div className="slot-modal-footer">
+                    <button
+                        className="confirm-button"
+                        onClick={handleConfirmBooking}
+                        disabled={!selectedSlot}
+                    >
+                        Confirm booking
+                    </button>
+
+                    {isAdmin && (
+                        <button
+                            className="add-slot-button"
+                            onClick={() => setIsAddSlotOpen(true)}
+                        >
+                            + Add slot
+                        </button>
+                    )}
                 </div>
-            )}
+            </Modal>
 
-            <CancelModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                onConfirm={handleConfirmCancel}
-                isLoading={isLoading}
+            <AddSlotModal
+                isOpen={isAddSlotOpen}
+                onClose={() => setIsAddSlotOpen(false)}
+                roomId={roomId}
+                onSuccess={handleSlotAdded}
+                onShowToast={onShowToast}
+                existingSlots={slots}
+                hasDuplicateSlot={hasDuplicateSlot}
             />
-        </div>
+        </>
     );
 };
 
-export default BookingsPage;
+export default SlotModal;

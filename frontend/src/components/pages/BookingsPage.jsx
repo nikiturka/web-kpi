@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import BookingCard from "../Bookings/BookingCard";
 import CancelModal from "../Bookings/CancelModal";
 import "../../styles/BookingsPage.css";
@@ -26,13 +26,8 @@ const BookingsPage = () => {
         }
     }, []);
 
-    useEffect(() => {
-        if (userId) {
-            fetchBookings();
-        }
-    }, [userId]);
-
-    const fetchBookings = async () => {
+    const fetchBookings = useCallback(async () => {
+        if (!userId) return;
         setIsLoading(true);
         setError(null);
         try {
@@ -43,7 +38,8 @@ const BookingsPage = () => {
             });
 
             if (!response.ok) {
-                throw new Error(`Failed to fetch bookings: ${response.status}`);
+                setError(`Failed to fetch bookings: ${response.status}`);
+                return;
             }
 
             const data = await response.json();
@@ -54,7 +50,11 @@ const BookingsPage = () => {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [userId]);
+
+    useEffect(() => {
+        fetchBookings();
+    }, [fetchBookings]);
 
     const handleRequestCancel = (bookingId) => {
         setSelectedBookingId(bookingId);
@@ -76,7 +76,8 @@ const BookingsPage = () => {
             );
 
             if (!response.ok) {
-                throw new Error(`Failed to cancel booking: ${response.status}`);
+                setError(`Failed to cancel booking: ${response.status}`);
+                return;
             }
 
             await fetchBookings();
