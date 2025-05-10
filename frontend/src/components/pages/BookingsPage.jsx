@@ -19,8 +19,7 @@ const BookingsPage = () => {
                 if (decoded?.user_id) {
                     setUserId(decoded.user_id);
                 }
-            } catch (err) {
-                console.error("Failed to decode token:", err);
+            } catch {
                 setError("Failed to authenticate. Please login again.");
             }
         }
@@ -44,8 +43,7 @@ const BookingsPage = () => {
 
             const data = await response.json();
             setBookings(data);
-        } catch (error) {
-            console.error("Error fetching bookings:", error);
+        } catch {
             setError("Failed to load bookings. Please try again later.");
         } finally {
             setIsLoading(false);
@@ -82,8 +80,7 @@ const BookingsPage = () => {
 
             await fetchBookings();
             setIsModalOpen(false);
-        } catch (error) {
-            console.error("Error cancelling booking:", error);
+        } catch {
             setError("Failed to cancel booking. Please try again.");
         } finally {
             setIsLoading(false);
@@ -97,7 +94,6 @@ const BookingsPage = () => {
             {error && (
                 <div className="error-message">
                     {error}
-                    <button onClick={fetchBookings}>Retry</button>
                 </div>
             )}
 
