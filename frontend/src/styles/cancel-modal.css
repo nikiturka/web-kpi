@@ -1,0 +1,76 @@
+.cancel-modal-content {
+    text-align: center;
+    padding: 1.5rem 2rem;
+    color: #222;
+}
+
+.cancel-modal-content h2 {
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.cancel-modal-content p {
+    margin-bottom: 1.5rem;
+    color: #444;
+    font-size: 1rem;
+}
+
+.cancel-modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1.25rem;
+}
+
+.confirm-btn {
+    padding: 0.6rem 1.2rem;
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.confirm-btn:hover {
+    background-color: #d93638;
+}
+
+.cancel-btn {
+    padding: 0.6rem 1.2rem;
+    background-color: #ccc;
+    color: #333;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.cancel-btn:hover {
+    background-color: #b3b3b3;
+}
+
+.spinner-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    color: #222;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid #ccc;
+    border-top: 3px solid #4338ca;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

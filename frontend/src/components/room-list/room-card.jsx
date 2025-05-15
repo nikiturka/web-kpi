@@ -1,5 +1,5 @@
 import React from "react";
-import "../../styles/RoomCard.css";
+import "../../styles/room-card.css";
 
 const formatRoomType = (type) => {
     const typeMap = {

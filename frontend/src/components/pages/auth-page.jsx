@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import LoginForm from "../Authentication/LoginForm.jsx";
-import RegisterForm from "../Authentication/RegisterForm.jsx";
-import ToggleBox from "../Authentication/ToggleBox.jsx";
-import ToastModal from "../UI/ToastModal.jsx";
-import "../../styles/AuthComponents.css";
+import LoginForm from "../authentication/login-form.jsx";
+import RegisterForm from "../authentication/register-form.jsx";
+import ToggleBox from "../authentication/toggle-box.jsx";
+import ToastModal from "../UI/toast-modal.jsx";
+import "../../styles/global.css";
+import "../../styles/auth-page.css";
 
 const AuthPage = () => {
     const [active, setActive] = useState(false);

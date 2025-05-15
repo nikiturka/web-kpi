@@ -1,0 +1,52 @@
+.bookings-page {
+    width: 100%;
+    min-width: 100vw;
+    padding: 2rem;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f0f4f8, #e1e8f0);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.bookings-page h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+    font-weight: 600;
+}
+
+.booking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 600px;
+    box-sizing: border-box;
+}
+
+.error-message {
+    background-color: #ffdddd;
+    color: #a33;
+    border: 1px solid #d88;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    max-width: 600px;
+    margin-bottom: 1rem;
+    box-sizing: border-box;
+    font-weight: 500;
+    text-align: center;
+}
+
+.loading-spinner {
+    font-size: 1.2rem;
+    color: #666;
+    margin: 2rem 0;
+}
+
+.no-bookings {
+    font-size: 1.2rem;
+    color: #555;
+    margin-top: 3rem;
+}

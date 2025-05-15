@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Modal from "../UI/Modal";
-import AddSlotModal from "./AddSlotModal";
-import "../../styles/SlotModal.css";
+import Modal from "../UI/modal.jsx";
+import AddSlotModal from "./add-slot-modal.jsx";
+import { dateFormatter, timeFormatter } from "../../utils/date-formatters.jsx";
+import "../../styles/slot-modal.css";
 
 const SlotModal = ({ roomId, isOpen, onClose, onShowToast }) => {
     const [slots, setSlots] = useState([]);
@@ -10,18 +11,6 @@ const SlotModal = ({ roomId, isOpen, onClose, onShowToast }) => {
     const [isAddSlotOpen, setIsAddSlotOpen] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const navigate = useNavigate();
-
-    const dateFormatter = new Intl.DateTimeFormat('en-GB', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    });
-
-    const timeFormatter = new Intl.DateTimeFormat('en-GB', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-    });
 
     const fetchSlots = async () => {
         try {

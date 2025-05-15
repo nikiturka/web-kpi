@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import Modal from "../UI/Modal";
+import Modal from "../UI/modal.jsx";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import "../../styles/AddSlotModal.css";
+import "../../styles/add-slot-modal.css";
 
 const AddSlotModal = ({
                           roomId,

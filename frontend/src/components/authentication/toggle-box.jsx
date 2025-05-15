@@ -1,5 +1,6 @@
 import React from "react";
-import "../../styles/AuthComponents.css";
+import "../../styles/global.css";
+import "../../styles/toggle-box.css";
 
 const ToggleBox = ({ setActive }) => {
     return (

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import RoomCard from "../RoomList/RoomCard";
-import SlotModal from "../RoomList/SlotModal";
-import ToastModal from "../UI/ToastModal";
-import "../../styles/RoomsPage.css";
+import RoomCard from "../room-list/room-card.jsx";
+import SlotModal from "../room-list/slot-modal.jsx";
+import ToastModal from "../UI/toast-modal.jsx";
+import "../../styles/rooms-page.css";
 
 const RoomsPage = () => {
     const [rooms, setRooms] = useState([]);

@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../styles/AuthComponents.css";
+import { validateEmail, validatePassword } from "../../utils/validation";
+import "../../styles/global.css";
+import "../../styles/login-form.css";
 
-const RegisterForm = ({ onShowToast }) => {
+const LoginForm = ({ onShowToast }) => {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -12,12 +14,27 @@ const RegisterForm = ({ onShowToast }) => {
         setError("");
         setLoading(true);
 
-        const username = e.target.username.value;
-        const email = e.target.email.value;
+        const email = e.target.email.value.trim();
         const password = e.target.password.value;
 
-        if (!username || !email || !password) {
-            const errorMsg = "All fields are required!";
+        if (!email || !password) {
+            const errorMsg = "Both fields are required!";
+            setError(errorMsg);
+            onShowToast?.(errorMsg);
+            setLoading(false);
+            return;
+        }
+
+        if (!validateEmail(email)) {
+            const errorMsg = "Invalid email format!";
+            setError(errorMsg);
+            onShowToast?.(errorMsg);
+            setLoading(false);
+            return;
+        }
+
+        if (!validatePassword(password)) {
+            const errorMsg = "Password must be at least 6 characters!";
             setError(errorMsg);
             onShowToast?.(errorMsg);
             setLoading(false);
@@ -25,19 +42,20 @@ const RegisterForm = ({ onShowToast }) => {
         }
 
         try {
-            const response = await fetch("http://127.0.0.1:8000/users/register", {
+            const response = await fetch("http://127.0.0.1:8000/users/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name: username, email, password }),
+                body: JSON.stringify({ email, password }),
             });
 
             const data = await response.json();
 
             if (response.ok) {
-                onShowToast?.("Registration successful!");
-                navigate("/");
+                localStorage.setItem("token", data.token || "dummy_token");
+                onShowToast?.("Login successful!");
+                navigate("/rooms");
             } else {
-                const errorMsg = data.detail || "Registration failed";
+                const errorMsg = data.detail || "Invalid credentials";
                 setError(errorMsg);
                 onShowToast?.(errorMsg);
             }
@@ -51,19 +69,18 @@ const RegisterForm = ({ onShowToast }) => {
     };
 
     return (
-        <div className="form-box register">
-            <h1>Register</h1>
+        <div className="form-box login">
+            <h1>Login</h1>
             <form onSubmit={handleSubmit}>
-                <input type="text" name="username" placeholder="Username" required />
                 <input type="email" name="email" placeholder="Email" required />
                 <input type="password" name="password" placeholder="Password" required />
                 {error && <p className="error">{error}</p>}
                 <button type="submit" disabled={loading}>
-                    {loading ? "Registering..." : "Register"}
+                    {loading ? "Logging in..." : "Login"}
                 </button>
             </form>
         </div>
     );
 };
 
-export default RegisterForm;
+export default LoginForm;

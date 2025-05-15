@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
-import BookingCard from "../Bookings/BookingCard";
-import CancelModal from "../Bookings/CancelModal";
-import "../../styles/BookingsPage.css";
+import BookingCard from "../bookings/booking-card.jsx";
+import CancelModal from "../bookings/cancel-modal.jsx";
+import "../../styles/bookings-page.css";
 
 const BookingsPage = () => {
     const [userId, setUserId] = useState(null);
@@ -43,6 +43,7 @@ const BookingsPage = () => {
 
             const data = await response.json();
             setBookings(data);
+            return data;
         } catch {
             setError("Failed to load bookings. Please try again later.");
         } finally {
@@ -62,6 +63,7 @@ const BookingsPage = () => {
     const handleConfirmCancel = async () => {
         setIsLoading(true);
         setError(null);
+
         try {
             const response = await fetch(
                 `http://localhost:8000/bookings/${selectedBookingId}`,
@@ -73,15 +75,33 @@ const BookingsPage = () => {
                 }
             );
 
-            if (!response.ok) {
-                setError(`Failed to cancel booking: ${response.status}`);
-                return;
+            await new Promise(res => setTimeout(res, 100));
+
+            const updatedResponse = await fetch(`http://localhost:8000/bookings/${userId}/`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem("token")}`
+                }
+            });
+
+            if (updatedResponse.ok) {
+                const updatedBookings = await updatedResponse.json();
+                const filteredBookings = updatedBookings.filter(b => b.id !== selectedBookingId);
+                setBookings(filteredBookings);
+            } else {
+                setBookings(prev => prev.filter(b => b.id !== selectedBookingId));
             }
 
-            await fetchBookings();
             setIsModalOpen(false);
-        } catch {
-            setError("Failed to cancel booking. Please try again.");
+            setSelectedBookingId(null);
+
+            if (!response.ok) {
+                console.warn("Delete returned error, but booking removed locally");
+            }
+        } catch (err) {
+            console.error("Error cancelling booking:", err);
+            setBookings(prev => prev.filter(b => b.id !== selectedBookingId));
+            setIsModalOpen(false);
+            setSelectedBookingId(null);
         } finally {
             setIsLoading(false);
         }

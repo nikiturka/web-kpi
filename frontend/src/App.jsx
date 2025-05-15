@@ -1,9 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import AuthPage from "./components/pages/AuthPage.jsx";
-import RoomsPage from "./components/pages/RoomsPage.jsx";
-import BookingsPage from "./components/pages/BookingsPage.jsx";
-import Header from './components/Header/Header';
+import AuthPage from "./components/pages/auth-page.jsx";
+import RoomsPage from "./components/pages/rooms-page.jsx";
+import BookingsPage from "./components/pages/bookings-page.jsx";
+import Header from './components/header/header.jsx';
 
 const App = () => {
     return (
