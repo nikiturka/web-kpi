@@ -20,6 +20,14 @@ const AuthPage = () => {
         }, 600);
     };
 
+    const switchToLogin = () => {
+        setTransitioning(true);
+        setTimeout(() => {
+            setActive(false);
+            setTransitioning(false);
+        }, 600);
+    };
+
     return (
         <>
             {toastMessage && (
@@ -28,11 +36,13 @@ const AuthPage = () => {
 
             <div className={`auth-container ${transitioning ? "transitioning" : ""}`}>
                 {active ? (
-                    <RegisterForm onShowToast={setToastMessage} />
+                    <RegisterForm
+                        onShowToast={setToastMessage}
+                        onSwitchToLogin={switchToLogin}
+                    />
                 ) : (
                     <LoginForm onShowToast={setToastMessage} />
                 )}
-
                 <ToggleBox setActive={handleToggle} />
             </div>
         </>

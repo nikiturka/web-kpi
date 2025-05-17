@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    min-height: 300px;
+    min-height: 250px;
 }
 
 .slot-inputs {
@@ -19,6 +19,9 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 14px;
+    background-color: #ffffff;
+    color: #000000;
+
 }
 
 .date-picker-calendar {

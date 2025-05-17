@@ -31,3 +31,4 @@ const CancelModal = ({ isOpen, onClose, onConfirm, isLoading }) => {
 };
 
 export default CancelModal;
+

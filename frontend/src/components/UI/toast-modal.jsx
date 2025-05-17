@@ -17,3 +17,4 @@ const ToastModal = ({ message, onClose }) => {
 };
 
 export default ToastModal;
+

@@ -3,13 +3,12 @@ import BookingCard from "../bookings/booking-card.jsx";
 import CancelModal from "../bookings/cancel-modal.jsx";
 import "../../styles/bookings-page.css";
 
-const BookingsPage = () => {
+const BookingsPage = ({ onShowToast }) => {
     const [userId, setUserId] = useState(null);
     const [bookings, setBookings] = useState([]);
     const [selectedBookingId, setSelectedBookingId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -20,15 +19,15 @@ const BookingsPage = () => {
                     setUserId(decoded.user_id);
                 }
             } catch {
-                setError("Failed to authenticate. Please login again.");
+                onShowToast?.("Failed to authenticate. Please login again.");
             }
         }
-    }, []);
+    }, [onShowToast]);
 
     const fetchBookings = useCallback(async () => {
         if (!userId) return;
         setIsLoading(true);
-        setError(null);
+
         try {
             const response = await fetch(`http://localhost:8000/bookings/${userId}/`, {
                 headers: {
@@ -37,7 +36,7 @@ const BookingsPage = () => {
             });
 
             if (!response.ok) {
-                setError(`Failed to fetch bookings: ${response.status}`);
+                onShowToast?.(`Failed to fetch bookings: ${response.status}`);
                 return;
             }
 
@@ -45,11 +44,11 @@ const BookingsPage = () => {
             setBookings(data);
             return data;
         } catch {
-            setError("Failed to load bookings. Please try again later.");
+            onShowToast?.("Failed to load bookings. Please try again later.");
         } finally {
             setIsLoading(false);
         }
-    }, [userId]);
+    }, [userId, onShowToast]);
 
     useEffect(() => {
         fetchBookings();
@@ -62,7 +61,6 @@ const BookingsPage = () => {
 
     const handleConfirmCancel = async () => {
         setIsLoading(true);
-        setError(null);
 
         try {
             const response = await fetch(
@@ -91,14 +89,16 @@ const BookingsPage = () => {
                 setBookings(prev => prev.filter(b => b.id !== selectedBookingId));
             }
 
+            if (!response.ok) {
+                onShowToast?.("Failed to cancel booking.");
+            } else {
+                onShowToast?.("Booking cancelled successfully.");
+            }
+
             setIsModalOpen(false);
             setSelectedBookingId(null);
-
-            if (!response.ok) {
-                console.warn("Delete returned error, but booking removed locally");
-            }
-        } catch (err) {
-            console.error("Error cancelling booking:", err);
+        } catch {
+            onShowToast?.("Error cancelling booking.");
             setBookings(prev => prev.filter(b => b.id !== selectedBookingId));
             setIsModalOpen(false);
             setSelectedBookingId(null);
@@ -110,12 +110,6 @@ const BookingsPage = () => {
     return (
         <div className="bookings-page">
             <h1>My Bookings</h1>
-
-            {error && (
-                <div className="error-message">
-                    {error}
-                </div>
-            )}
 
             {isLoading && bookings.length === 0 ? (
                 <div className="loading-spinner">Loading...</div>

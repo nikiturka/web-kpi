@@ -21,6 +21,7 @@ const RoomCard = ({ room, onViewSlots }) => {
             <button onClick={() => onViewSlots(room.id)}>Show slots</button>
         </div>
     );
+
 };
 
 export default RoomCard;

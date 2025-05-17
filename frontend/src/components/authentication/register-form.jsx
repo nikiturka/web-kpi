@@ -1,17 +1,14 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { validateEmail, validatePassword, validateUsername } from "../../utils/validation";
 import "../../styles/global.css";
 import "../../styles/register-form.css";
 
-const RegisterForm = ({ onShowToast }) => {
-    const [error, setError] = useState("");
+const RegisterForm = ({ onShowToast,onSwitchToLogin }) => {
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError("");
         setLoading(true);
 
         const username = e.target.username.value.trim();
@@ -19,33 +16,25 @@ const RegisterForm = ({ onShowToast }) => {
         const password = e.target.password.value;
 
         if (!username || !email || !password) {
-            const errorMsg = "All fields are required!";
-            setError(errorMsg);
-            onShowToast?.(errorMsg);
+            onShowToast?.("All fields are required!");
             setLoading(false);
             return;
         }
 
         if (!validateUsername(username)) {
-            const errorMsg = "Username must be at least 3 characters!";
-            setError(errorMsg);
-            onShowToast?.(errorMsg);
+            onShowToast?.("Username must be at least 3 characters!");
             setLoading(false);
             return;
         }
 
         if (!validateEmail(email)) {
-            const errorMsg = "Invalid email format!";
-            setError(errorMsg);
-            onShowToast?.(errorMsg);
+            onShowToast?.("Invalid email format!");
             setLoading(false);
             return;
         }
 
         if (!validatePassword(password)) {
-            const errorMsg = "Password must be at least 6 characters!";
-            setError(errorMsg);
-            onShowToast?.(errorMsg);
+            onShowToast?.("Password must be at least 6 characters!");
             setLoading(false);
             return;
         }
@@ -61,16 +50,12 @@ const RegisterForm = ({ onShowToast }) => {
 
             if (response.ok) {
                 onShowToast?.("Registration successful!");
-                navigate("/");
+                onSwitchToLogin?.();
             } else {
-                const errorMsg = data.detail || "Registration failed";
-                setError(errorMsg);
-                onShowToast?.(errorMsg);
+                onShowToast?.(data.detail || "Registration failed");
             }
         } catch {
-            const errorMsg = "Server error. Please try again later.";
-            setError(errorMsg);
-            onShowToast?.(errorMsg);
+            onShowToast?.("Server error. Please try again later.");
         } finally {
             setLoading(false);
         }
@@ -83,7 +68,6 @@ const RegisterForm = ({ onShowToast }) => {
                 <input type="text" name="username" placeholder="Username" required />
                 <input type="email" name="email" placeholder="Email" required />
                 <input type="password" name="password" placeholder="Password" required />
-                {error && <p className="error">{error}</p>}
                 <button type="submit" disabled={loading}>
                     {loading ? "Registering..." : "Register"}
                 </button>
@@ -93,3 +77,4 @@ const RegisterForm = ({ onShowToast }) => {
 };
 
 export default RegisterForm;
+
